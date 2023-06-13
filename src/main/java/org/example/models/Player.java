@@ -13,7 +13,7 @@ public class Player {
         this.playerType = playerType;
     }
 
-    private Move decideMove(){
+    public Move decideMove(Board board){
         Scanner sc = new Scanner(System.in);
         System.out.println("Please enter the row");
         int row = sc.nextInt();

@@ -1,10 +1,9 @@
 package org.example.models;
 
 import org.example.exception.InvalidGameConstructionParametersException;
-import org.example.strategies.GameWinningStrategy;
-import org.example.strategies.OrderOneGameWinningStrategy;
+import org.example.strategies.gameWinningStrategy.GameWinningStrategy;
+import org.example.strategies.gameWinningStrategy.OrderOneGameWinningStrategy;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +15,49 @@ public class Game {
     private Player winner;
     private int nextPlayerIndex;
     private GameWinningStrategy gameWinningStrategy;
+
+    private Game() {
+
+    }
+
+    public void undo(){
+
+    }
+
+    public void displayBoard(){
+        this.board.display();
+    }
+
+    public void makeNextMove(){
+        Player toMovePlayer = this.players.get(this.nextPlayerIndex);
+        System.out.println("It is " + this.players.get(this.nextPlayerIndex).getName() + "'s turn.");
+
+        Move move = toMovePlayer.decideMove(this.board);
+
+        // validate move
+        int row = move.getCell().getRow();
+        int col = move.getCell().getCol();
+
+        System.out.println("Move happened at: " + row + ", " + col + ".");
+
+        this.board.getBoard().get(row).get(col).setCellState(CellState.FILLED);
+        this.board.getBoard().get(row).get(col).setPlayer(this.players.get(this.nextPlayerIndex));
+
+        Move finalMove = new Move(
+                this.players.get(this.nextPlayerIndex),
+                this.board.getBoard().get(row).get(col)
+        );
+
+        this.moves.add(finalMove);
+
+        if(this.gameWinningStrategy.checkWinner(this.board, this.players.get(this.nextPlayerIndex), finalMove.getCell())){
+            this.gameStatus = GameStatus.WIN;
+            this.winner =  this.players.get(this.nextPlayerIndex);
+        }
+
+        this.nextPlayerIndex += 1;
+        this.nextPlayerIndex %= players.size();
+    }
 
     public Board getBoard() {
         return board;
@@ -71,10 +113,6 @@ public class Game {
 
     public void setGameWinningStrategy(GameWinningStrategy gameWinningStrategy) {
         this.gameWinningStrategy = gameWinningStrategy;
-    }
-
-    private Game() {
-
     }
 
     public static Builder getBuilder(){

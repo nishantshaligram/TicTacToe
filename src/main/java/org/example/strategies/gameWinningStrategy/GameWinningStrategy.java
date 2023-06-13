@@ -1,4 +1,4 @@
-package org.example.strategies;
+package org.example.strategies.gameWinningStrategy;
 
 import org.example.models.Board;
 import org.example.models.Cell;
